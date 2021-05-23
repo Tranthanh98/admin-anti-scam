@@ -11,17 +11,21 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Icon from "@material-ui/core/Icon";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 // core components
 import AdminNavbarLinks from "components/Navbars/AdminNavbarLinks.js";
 import RTLNavbarLinks from "components/Navbars/RTLNavbarLinks.js";
 
 import styles from "assets/jss/material-dashboard-react/components/sidebarStyle.js";
+import { Box } from "@material-ui/core";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles(styles);
 
 export default function Sidebar(props) {
   const classes = useStyles();
   let location = useLocation();
+  const dispatch = useDispatch();
   // verifies if routeName is the one active (in browser input)
   function activeRoute(routeName) {
     return location.pathname === routeName;
@@ -79,21 +83,36 @@ export default function Sidebar(props) {
           </NavLink>
         );
       })}
+      <Box
+        onClick={() => dispatch({ type: "LOGOUT" })}
+        className={classes.item}
+        activeClassName="active"
+      >
+        <ListItem button className={classes.itemLink}>
+          <ExitToAppIcon className={classNames(classes.itemIcon)} />
+          <ListItemText
+            primary={"Đăng xuất"}
+            className={classNames(classes.itemText)}
+            disableTypography={true}
+          />
+        </ListItem>
+      </Box>
     </List>
   );
   var brand = (
     <div className={classes.logo}>
       <a
-        href="https://www.creative-tim.com?ref=mdr-sidebar"
+        href="/admin"
         className={classNames(classes.logoLink, {
           [classes.logoLinkRTL]: props.rtlActive,
         })}
-        target="_blank"
       >
         <div className={classes.logoImage}>
           <img src={logo} alt="logo" className={classes.img} />
         </div>
-        {logoText}
+        <div className={classes.logoText}>
+          <img src={logoText} alt="logo" className={classes.imgLogo} />
+        </div>
       </a>
     </div>
   );

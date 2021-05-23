@@ -1,24 +1,21 @@
-import React from "react";
 import Avatar from "@material-ui/core/Avatar";
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import Grid from "@material-ui/core/Grid";
 import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useInputText } from "../../general/CustomHook";
-import * as yup from "yup";
-import { useHistory } from "react-router";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import React from "react";
 import { useDispatch } from "react-redux";
-import { loginAct } from "../../actions/login.action";
+import { useHistory } from "react-router";
+import * as yup from "yup";
 import { addAlert } from "../../actions/alertify.action";
-import { useLastLocation } from "react-router-last-location";
+import { loginAct } from "../../actions/login.action";
+import { useInputText } from "../../general/CustomHook";
 
 function Copyright() {
   return (
@@ -81,14 +78,8 @@ export default function LoginPage() {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const lastHistory = useLastLocation();
   const _gotoBack = () => {
-    console.log("lastHistory:", lastHistory);
-    if (lastHistory == null || lastHistory.pathname === "/sign-in") {
-      history.push("/");
-    } else {
-      history.goBack();
-    }
+    history.push("/");
   };
 
   const _login = () => {
@@ -141,7 +132,7 @@ export default function LoginPage() {
             >
               Đăng nhập
             </Button>
-            <Grid container spacing={2}>
+            {/* <Grid container spacing={2}>
               <Grid item xs={12} sm>
                 <Link href="/sign-up" variant="body2">
                   Quên mật khẩu?
@@ -152,7 +143,7 @@ export default function LoginPage() {
                   {"Bạn chưa có tài khoản? Đăng ký."}
                 </Link>
               </Grid>
-            </Grid>
+            </Grid> */}
             <Box mt={5}>
               <Copyright />
             </Box>

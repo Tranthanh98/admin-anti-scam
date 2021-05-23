@@ -79,7 +79,7 @@ const sidebarStyle = (theme) => ({
     ...defaultFont,
     textTransform: "uppercase",
     padding: "5px 0",
-    display: "block",
+    display: "flex",
     fontSize: "18px",
     textAlign: "left",
     fontWeight: "400",
@@ -89,6 +89,7 @@ const sidebarStyle = (theme) => ({
     "&,&:hover": {
       color: whiteColor,
     },
+    alignItems: "center",
   },
   logoLinkRTL: {
     textAlign: "right",
@@ -102,10 +103,14 @@ const sidebarStyle = (theme) => ({
   },
   img: {
     width: "35px",
-    top: "22px",
+    top: "13px",
     position: "absolute",
     verticalAlign: "middle",
     border: "0",
+  },
+  logoText: {},
+  imgLogo: {
+    width: "130px",
   },
   background: {
     position: "absolute",
