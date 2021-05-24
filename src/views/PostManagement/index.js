@@ -3,7 +3,6 @@ import ContextWrapper from "components/ContextWrapper";
 import moment from "moment";
 import React, { Component } from "react";
 import { withRouter } from "react-router";
-import DialogDetailPost from "./components/DialogDetailPost";
 import FilterPost from "./components/FilterPost";
 import TablePostManage from "./components/TablePostManage";
 
@@ -16,8 +15,7 @@ class PostManagement extends Component {
       fromDate: moment(new Date(), "dd/MM/yyyy"),
       toDate: moment(new Date(), "dd/MM/yyyy"),
     },
-    itemPost: {},
-    openDetail: false,
+    kindOfId: 0,
   };
   render() {
     let provider = {
@@ -28,6 +26,8 @@ class PostManagement extends Component {
       onChangeDateRange: this._onChangeDateRange,
       onClickRow: this._onClickRow,
       onCloseDialog: this._onCloseDialog,
+      onClickSearch: this._onClickSearch,
+      onChangeKindOf: this._onChangeKindOf,
     };
     return (
       <ContextWrapper.Provider value={provider}>
@@ -35,7 +35,6 @@ class PostManagement extends Component {
           <FilterPost />
         </Box>
         <TablePostManage />
-        <DialogDetailPost />
       </ContextWrapper.Provider>
     );
   }
@@ -59,14 +58,16 @@ class PostManagement extends Component {
 
   _onClickRow = (item) => {
     this.props.history.push("/admin/detail-post/" + item.id);
-    // this.setState({
-    //   itemPost: item,
-    //   openDetail: true,
-    // });
   };
 
   _onCloseDialog = () => {
     this.setState({ openDetail: false });
+  };
+
+  _onClickSearch = () => {};
+
+  _onChangeKindOf = (kindOf) => {
+    this.setState({ kindOfId: kindOf.value });
   };
 }
 

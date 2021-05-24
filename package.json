@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^12.8.3",
     "chartist": "^0.11.4",
     "classnames": "^2.3.1",
+    "formik": "^2.2.8",
     "history": "^5.0.0",
     "moment": "^2.29.1",
     "perfect-scrollbar": "^1.5.1",
@@ -27,6 +28,7 @@
     "redux": "^4.1.0",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.1.2",
     "yup": "^0.32.9"
   },

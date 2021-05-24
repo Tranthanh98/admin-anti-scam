@@ -36,7 +36,6 @@ export default function CustomTable(props) {
           <TableHead className={classes[tableHeaderColor + "TableHeader"]}>
             <TableRow className={classes.tableHeadRow}>
               {header.map((head, index) => {
-                console.log("custom:", head);
                 return (
                   <TableCell style={{ ...head.custom }} key={head.id}>
                     {head.title}
@@ -58,7 +57,9 @@ export default function CustomTable(props) {
                         onClick={() => onClickRow(row)}
                         align="left"
                       >
-                        {row[h.nameMapColumn]}
+                        {h.renderOptionFunc
+                          ? h.renderOptionFunc(row)
+                          : row[h.nameMapColumn]}
                       </TableCell>
                     );
                   })}

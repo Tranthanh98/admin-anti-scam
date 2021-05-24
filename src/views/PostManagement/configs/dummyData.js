@@ -1,4 +1,6 @@
+import kindOf from "general/Dummy/kindOf";
 import status from "general/Dummy/statusPost";
+import { KIND_OF } from "general/enum";
 import { STATUS_POST } from "general/enum";
 import { formateDateTime } from "general/helper";
 import types from "../../../general/Dummy/types";
@@ -15,7 +17,9 @@ function createDataPost(
   statusId,
   statusName,
   description = null,
-  images = null
+  images = null,
+  kindOfId = kindOf[1].value,
+  kindOfName = kindOf[1].label
 ) {
   return {
     id,
@@ -32,6 +36,9 @@ function createDataPost(
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3Fq-fvoVqe1_R8hwTatkwtOBj-My42fAOyg&usqp=CAU",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4uDQ2Uomp7076bfVGEi-PWj0jCzJMvFMB8Q&usqp=CAU",
     ],
+    kindOfId,
+    kindOfName,
+    approvedBy: "Thanh.tran",
   };
 }
 

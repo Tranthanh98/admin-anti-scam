@@ -20,3 +20,8 @@ export const STATUS_POST = {
   Approved: 2,
   Denied: 3,
 };
+
+export const USER_ROLE = {
+  SystemManage: 1,
+  ApprovedPost: 2,
+};

@@ -6,6 +6,7 @@ import createColumn from "general/createColumn";
 import { sleep } from "general/helper";
 import dummyData from "../configs/dummyData";
 import { connectToContext } from "components/ContextWrapper";
+import { STATUS_POST } from "general/enum";
 
 class TablePostManage extends Component {
   constructor(props) {
@@ -35,7 +36,22 @@ class TablePostManage extends Component {
       createColumn(i++, "createdBy", "Tác giả"),
       createColumn(i++, "createdDate", "Ngày viết"),
       createColumn(i++, "typeName", "Thể loại"),
-      createColumn(i++, "statusName", "Trạng thái"),
+      createColumn(i++, "statusName", "Trạng thái", null, (rowData) => {
+        let color = "success.main";
+        if (rowData.statusId == STATUS_POST.WaitApproved) {
+          color = "warning.main";
+        }
+        if (rowData.statusId == STATUS_POST.Denied) {
+          color = "error.main";
+        }
+        return (
+          <Box color={color} fontWeight="bold">
+            {rowData.statusName}
+          </Box>
+        );
+      }),
+      createColumn(i++, "kindOfName", "Uy tín/Lừa đảo"),
+      createColumn(i++, "approvedBy", "Duyệt bởi"),
     ];
   }
   render() {

@@ -3,7 +3,7 @@ function createColumn(
   nameMapColumn,
   title,
   custom = null,
-  renderOptionFuc = null
+  renderOptionFunc = null
 ) {
   return {
     id,
@@ -13,7 +13,7 @@ function createColumn(
       backgroundColor: "#17afc4",
       ...custom,
     },
-    renderOptionFuc,
+    renderOptionFunc,
   };
 }
 export default createColumn;

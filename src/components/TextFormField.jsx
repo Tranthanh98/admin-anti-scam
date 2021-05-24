@@ -18,8 +18,8 @@ TextFormField.propTypes = {
 };
 
 TextFormField.defaultProps = {
-  variant: "standard",
-  fullWidth: false,
+  variant: "outlined",
+  fullWidth: true,
   multiline: false,
   value: "",
   placeholder: "",
