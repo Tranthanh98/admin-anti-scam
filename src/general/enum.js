@@ -14,3 +14,9 @@ export const TYPE = {
   SocialAccount: 3,
   NumberPhone: 4,
 };
+
+export const STATUS_POST = {
+  WaitApproved: 1,
+  Approved: 2,
+  Denied: 3,
+};

@@ -72,6 +72,17 @@ const tableStyle = (theme) => ({
     outline: "none",
     verticalAlign: "middle",
   },
+  pagination: {
+    "& > *": {
+      marginTop: 8,
+    },
+  },
+  tableRow: {
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "white",
+    },
+  },
 });
 
 export default tableStyle;

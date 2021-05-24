@@ -18,6 +18,7 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/logo-primary.png";
 import logoText from "assets/img/antiscam.png";
+import DetailPost from "views/DetailPost/DetailPost";
 
 let ps;
 
@@ -35,6 +36,7 @@ const switchRoutes = (
       }
       return null;
     })}
+    <Route path="/admin/detail-post/:id" component={DetailPost} />
     <Redirect from="/admin" to="/admin/dashboard" />
   </Switch>
 );
