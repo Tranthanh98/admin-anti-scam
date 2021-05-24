@@ -6,6 +6,7 @@ import LoginPage from "views/Login/LoginPage";
 import { Box } from "@material-ui/core";
 import LoadingComponent from "components/LoadingComponent";
 import Alertify from "components/Alertify";
+import BaseModal from "components/BaseModal";
 
 function PrivateRoute(props) {
   const user = useSelector((state) => state.loginReducer);
@@ -32,6 +33,7 @@ class App extends Component {
         </BrowserRouter>
         <LoadingComponent />
         <Alertify />
+        <BaseModal />
       </Box>
     );
   }

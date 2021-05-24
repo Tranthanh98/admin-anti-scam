@@ -18,23 +18,8 @@ export default function Footer(props) {
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              <a href="#home" className={classes.block}>
-                Home
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#company" className={classes.block}>
-                Company
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#portfolio" className={classes.block}>
-                Portfolio
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="#blog" className={classes.block}>
-                Blog
+              <a href="/admin" className={classes.block}>
+                ANTISCAM VIETNAM
               </a>
             </ListItem>
           </List>
@@ -43,13 +28,13 @@ export default function Footer(props) {
           <span>
             &copy; {1900 + new Date().getYear()}{" "}
             <a
-              href="https://www.creative-tim.com?ref=mdr-footer"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=antiscam.contact@gmail.com"
               target="_blank"
               className={classes.a}
             >
-              Creative Tim
+              antiscam.contact@gmail.com
             </a>
-            , made with love for a better web
+            , Chống lừa đảo AntiScam
           </span>
         </p>
       </div>

@@ -8,6 +8,9 @@ import React, { useState } from "react";
 import status from "../../../general/Dummy/statusPost";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { openModalAct } from "actions/modal.action";
+import BodyFormReputation from "./BodyFormReputation";
+import { useDispatch } from "react-redux";
 
 function FilterPost({
   typeId,
@@ -20,19 +23,31 @@ function FilterPost({
   // onChangeDateRange,
 }) {
   // console.log(`dateRange:`, dateRange);
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  // const [dateRange, setDateRange] = useState([null, null]);
+  // const [startDate, setStartDate] = useState(new Date());
+  // const [endDate, setEndDate] = useState(new Date());
 
-  const _onChangeDateRange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+  // const _onChangeDateRange = (dates) => {
+  //   const [start, end] = dates;
+  //   setStartDate(start);
+  //   setEndDate(end);
+  // };
+  const dispatch = useDispatch();
+  const _createNewReputation = () => {
+    let modalData = {
+      title: "Bài đăng uy tín",
+      body: <BodyFormReputation />,
+      style: {
+        fullWidth: true,
+        maxWidth: "md",
+      },
+    };
+    dispatch(openModalAct(modalData));
   };
   return (
     <Box>
       <Grid container spacing={2}>
-        <Grid item xs={9}>
+        <Grid item xs={6}>
           <TextFormField
             value={searchText}
             onChange={onChangeSearchText}
@@ -43,12 +58,15 @@ function FilterPost({
             fullWidth
           />
         </Grid>
-        <Grid item xs={3}>
-          <ButtonCommon size="medium">Tìm kiếm</ButtonCommon>
+        <Grid item xs={3}></Grid>
+        <Grid item xs>
+          <ButtonCommon onClick={_createNewReputation} size="medium">
+            Tạo bài đăng uy tín
+          </ButtonCommon>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={4} sm={3}>
           <SelectOption
             value={types.find((i) => i.value == typeId)}
             onChange={onChangeType}
@@ -57,7 +75,7 @@ function FilterPost({
             size="small"
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} sm={3}>
           <SelectOption
             value={status.find((i) => i.value == statusId)}
             onChange={onChangeStatus}
@@ -67,13 +85,7 @@ function FilterPost({
           />
         </Grid>
         {/* <Grid item xs={12}>
-          <DatePicker
-            selected={startDate}
-            onChange={_onChangeDateRange}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-          />
+          <ButtonCommon size="medium">Tìm kiếm</ButtonCommon>
         </Grid> */}
       </Grid>
     </Box>

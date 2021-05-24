@@ -43,8 +43,8 @@ const dummyData = [
     formateDateTime(new Date(), "DD/MM/YYYY HH:mm A"),
     types[1].label,
     types[1].value,
-    status[0].value,
-    status[0].label
+    status[1].value,
+    status[1].label
   ),
   createDataPost(
     i++,
@@ -53,8 +53,8 @@ const dummyData = [
     formateDateTime(new Date(), "DD/MM/YYYY HH:mm A"),
     types[1].label,
     types[1].value,
-    status[0].value,
-    status[0].label
+    status[1].value,
+    status[1].label
   ),
   createDataPost(
     i++,
@@ -63,8 +63,8 @@ const dummyData = [
     formateDateTime(new Date(), "DD/MM/YYYY HH:mm A"),
     types[2].label,
     types[2].value,
-    status[0].value,
-    status[0].label
+    status[2].value,
+    status[2].label
   ),
 ];
 export default dummyData;
