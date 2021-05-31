@@ -26,7 +26,7 @@ export default function CustomTable(props) {
     hasPagination,
     onChangePage,
   } = props;
-  const _onChangePage = (page) => {
+  const _onChangePage = (_, page) => {
     onChangePage && onChangePage(page);
   };
   return (
@@ -58,7 +58,7 @@ export default function CustomTable(props) {
                         align="left"
                       >
                         {h.renderOptionFunc
-                          ? h.renderOptionFunc(row)
+                          ? h.renderOptionFunc(row, index)
                           : row[h.nameMapColumn]}
                       </TableCell>
                     );
