@@ -31,8 +31,6 @@ function FilterPost({
   onClickSearch,
   kindOfId,
   onChangeKindOf,
-  typeOptions,
-  statusOptions,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -68,18 +66,18 @@ function FilterPost({
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <SelectOption
-            value={typeOptions.find((i) => i.value == typeId)}
+            value={types.find((i) => i.value == typeId)}
             onChange={onChangeType}
-            options={typeOptions}
+            options={types}
             label="Thể loại"
             size="small"
           />
         </Grid>
         <Grid item xs={3}>
           <SelectOption
-            value={statusOptions.find((i) => i.value == statusId)}
+            value={status.find((i) => i.value == statusId)}
             onChange={onChangeStatus}
-            options={statusOptions}
+            options={status}
             label="Trạng thái"
             size="small"
           />
@@ -155,8 +153,6 @@ const mapContextToProps = ({
   onClickSearch,
   kindOfId,
   onChangeKindOf,
-  typeOptions,
-  statusOptions,
 }) => ({
   typeId,
   onChangeType,
@@ -169,7 +165,5 @@ const mapContextToProps = ({
   onClickSearch,
   kindOfId,
   onChangeKindOf,
-  typeOptions,
-  statusOptions,
 });
 export default connectToContext(mapContextToProps)(FilterPost);

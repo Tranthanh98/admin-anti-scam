@@ -1,57 +1,58 @@
-import axios from "axios";
-import eventBus from "./EventBus";
+import axios from 'axios'
+import eventBus from './EventBus'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const config = {
-  baseURL: BASE_URL,
-  //  headers: {
+   baseURL: BASE_URL, 
+  //  headers: { 
   //   'Access-Control-Allow-Origin' : '*',
   //   'Access-Control-Allow-Methods' : 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   // },
-};
+}
 
-const httpClient = axios.create(config);
+const httpClient = axios.create(config)
 
-const loggerInterceptor = (config) => {
-  return config;
-};
+const loggerInterceptor = config => {
+  return config
+}
 
 /** Adding the request interceptors */
 // httpClient.interceptors.request.use(authInterceptor);
 httpClient.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`
     }
 
-    return config;
+
+    return config
   },
   function (error) {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
-httpClient.interceptors.request.use(loggerInterceptor);
+httpClient.interceptors.request.use(loggerInterceptor)
 
 /** Adding the response interceptors */
 httpClient.interceptors.response.use(
-  (response) => {
-    return response;
+  response => {
+    return response
   },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      eventBus.publish("error/authorized", "Vui lòng đăng nhập lại");
+  error => {
+    if(error.isAxiosError){
+      eventBus.publish('pushlish/networkerror', String(error));
     }
     if (error.response && error.response.status === 422) {
-      return Promise.reject(error);
+      return Promise.reject(error)
     } else {
-      return Promise.reject(error);
+      return Promise.reject(error)
     }
   }
-);
+)
 
 /**
  *
@@ -59,26 +60,26 @@ httpClient.interceptors.response.use(
  * @param {*} requestBody
  */
 export const sendPost = async (url, requestBody) => {
-  let response = await httpClient.post(url, requestBody);
+    
+  let response = await httpClient.post(url, requestBody)
 
-  return response;
-};
+  return response
+}
 
 /**
  *
  * @param {*} url
  */
 export const sendGet = async (url) => {
-  let response = await httpClient.get(url);
 
-  return response;
-};
+  let response = await httpClient.get(url)
 
-export const upload = async (url, formData, config) => {
-  let response = await httpClient.post(url, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response;
-};
+  return response
+}
+
+export const upload = async(url, formData, config) =>{
+    let response = await httpClient.post(url, formData, {headers: {
+      'Content-Type': 'multipart/form-data'
+    }});
+    return response;
+}

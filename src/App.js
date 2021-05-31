@@ -7,9 +7,6 @@ import { Box } from "@material-ui/core";
 import LoadingComponent from "components/LoadingComponent";
 import Alertify from "components/Alertify";
 import BaseModal from "components/BaseModal";
-import eventBus from "general/EventBus";
-import { addAlert } from "actions/alertify.action";
-import { LOGOUT } from "actions/login.action";
 
 function PrivateRoute(props) {
   const user = useSelector((state) => state.loginReducer);
@@ -24,30 +21,6 @@ function PrivateRoute(props) {
 }
 
 class App extends Component {
-  state = {
-    needLogout: false,
-  };
-
-  componentDidMount() {
-    eventBus.subscribe(this, "error/authorized", () => {
-      this._setNeedLogout();
-    });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevState.needLogout && this.state.needLogout) {
-      this.props.logout();
-      this.props.addAlert(
-        "Tài khoản đã hết hạn, vui lòng đăng nhập lại",
-        "error"
-      );
-      this._handleLogout();
-    }
-  }
-
-  componentWillUnmount() {
-    eventBus.unsubscribe(this);
-  }
   render() {
     return (
       <Box>
@@ -64,26 +37,8 @@ class App extends Component {
       </Box>
     );
   }
-
-  _setNeedLogout = () => {
-    this.setState({ needLogout: true });
-  };
-
-  _handleLogout = () => {
-    let confirmLogout = window.confirm(
-      "Tài khoản đã hết hạn, vui lòng đăng nhập lại"
-    );
-    if (confirmLogout) {
-      window.open("/login", "_self");
-    } else {
-      return;
-    }
-  };
 }
 
 const mapStateToProps = (context) => ({});
-const mapDispatchToProps = {
-  addAlert: addAlert,
-  logout: () => ({ type: LOGOUT }),
-};
+const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(App);
