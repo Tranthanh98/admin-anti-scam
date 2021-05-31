@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router";
 import FilterPost from "./components/FilterPost";
 import TablePostManage from "./components/TablePostManage";
+import * as httpClient from "../../general/HttpClient";
 
 class PostManagement extends Component {
   state = {
@@ -16,7 +17,21 @@ class PostManagement extends Component {
       toDate: moment(new Date(), "dd/MM/yyyy"),
     },
     kindOfId: 0,
+    reloadTable: false,
+    typeOptions: [],
+    statusOptions: [],
   };
+
+  async componentDidMount() {
+    let res = await httpClient.sendPost("/postmanager/GetDefaultData");
+    if (res.data.isSuccess) {
+      let { statusOptions, typeOptions } = res.data.data;
+      this.setState({
+        typeOptions,
+        statusOptions,
+      });
+    }
+  }
   render() {
     let provider = {
       ...this.state,
@@ -25,7 +40,6 @@ class PostManagement extends Component {
       onChangeStatus: this._onChangeStatus,
       onChangeDateRange: this._onChangeDateRange,
       onClickRow: this._onClickRow,
-      onCloseDialog: this._onCloseDialog,
       onClickSearch: this._onClickSearch,
       onChangeKindOf: this._onChangeKindOf,
     };
@@ -44,11 +58,11 @@ class PostManagement extends Component {
   };
 
   _onChangeType = (type) => {
-    this.setState({ typeId: type.value });
+    this.setState({ typeId: type.value, reloadTable: true });
   };
 
   _onChangeStatus = (status) => {
-    this.setState({ statusId: status.value });
+    this.setState({ statusId: status.value, reloadTable: true });
   };
 
   _onChangeDateRange = (dateRange) => {
@@ -60,14 +74,10 @@ class PostManagement extends Component {
     this.props.history.push("/admin/detail-post/" + item.id);
   };
 
-  _onCloseDialog = () => {
-    this.setState({ openDetail: false });
-  };
-
   _onClickSearch = () => {};
 
   _onChangeKindOf = (kindOf) => {
-    this.setState({ kindOfId: kindOf.value });
+    this.setState({ kindOfId: kindOf.value, reloadTable: true });
   };
 }
 
