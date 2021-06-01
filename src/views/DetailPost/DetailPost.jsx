@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import {
   Box,
+  Button,
   Card,
   CardContent,
+  CircularProgress,
+  Icon,
+  IconButton,
   makeStyles,
+  Typography,
   useTheme,
 } from "@material-ui/core";
-import { useHistory, useParams } from "react-router";
-import dummyData from "views/PostManagement/configs/dummyData";
-import PhotoSwipeWrapper from "components/PhotoSwipeWrapper";
-import { formateDateTime } from "general/helper";
+import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import { addAlert } from "actions/alertify.action";
+import { loadingAct } from "actions/loading.action";
 import ButtonCommon from "components/ButtonCommon";
+import PhotoSwipeWrapper from "components/PhotoSwipeWrapper";
 import { STATUS_POST } from "general/enum";
+import { formateDateTime } from "general/helper";
+import * as httpClient from "general/HttpClient";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory, useParams } from "react-router";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 
 const useStyles = makeStyles((theme) => ({
   titleCss: {
@@ -34,12 +43,26 @@ function DetailPost(props) {
   const [openImg, setOpenImg] = useState(false);
   const [indexImg, setIndexImg] = useState(0);
   const params = useParams();
+  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const [imageShow, setImageShow] = useState([]);
-  const _getPost = () => {
+  const _getPost = async () => {
     const { id } = params;
-    const post = dummyData.find((i) => i.id == id);
-    if (post) {
-      setPost(post);
+    setLoading(true);
+    try {
+      let res = await httpClient.sendGet("/PostManager/DetailPost/" + id);
+      if (res.data.isSuccess) {
+        setPost(res.data.data);
+      } else {
+        throw new Error(res.data.messages);
+      }
+    } catch (e) {
+      dispatch(addAlert(String(e), "error"));
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -48,15 +71,15 @@ function DetailPost(props) {
 
   useEffect(() => {
     const imgShows =
-      post?.images &&
-      post?.images?.map((i) => {
+      post?.imageList &&
+      post?.imageList?.map((i) => {
         return {
           src: i,
           w: 600,
           h: 400,
         };
       });
-    setImageShow(imgShows);
+    setImageShow(imgShows ?? []);
   }, [post]);
 
   const _openImage = (index) => {
@@ -66,118 +89,242 @@ function DetailPost(props) {
   const _onCloseImg = () => {
     setOpenImg(false);
   };
+
+  const _onClickAccept = async () => {
+    const { id } = params;
+    dispatch(loadingAct(true));
+    try {
+      let res = await httpClient.sendGet("/PostManager/Accept/" + id);
+      if (!res.data.isSuccess) {
+        throw new Error(res.data.messages);
+      }
+      await _getPost();
+    } catch (e) {
+      dispatch(addAlert(String(e), "error"));
+    } finally {
+      dispatch(loadingAct(false));
+    }
+  };
+
+  const _disablePost = async () => {
+    const { id } = params;
+    dispatch(loadingAct(true));
+    try {
+      let res = await httpClient.sendGet("/PostManager/Disabled/" + id);
+      if (!res.data.isSuccess) {
+        throw new Error(res.data.messages);
+      }
+      await _getPost();
+    } catch (e) {
+      dispatch(addAlert(String(e), "error"));
+    } finally {
+      dispatch(loadingAct(false));
+    }
+  };
+
+  const _goBack = () => {
+    console.log("back");
+    history.goBack();
+  };
   const theme = useTheme();
+  console.log("post:", post);
   return (
-    <Box display="flex" justifyContent="center" minHeight="100vh">
-      {post ? (
-        <>
-          <Box width={"70%"}>
-            <Card>
-              <Box
-                textAlign="start"
-                margin="8px 0 0 0"
-                className={classes.titleCss}
-              >
-                <Box color="primary.main" fontSize={theme.spacing(2.5)}>
-                  {post.title}
-                </Box>
-                <Box marginTop="8px">
-                  <Box marginLeft="8px" style={{ wordBreak: "break-all" }}>
-                    Loại báo cáo : {post.typeName}
-                  </Box>
-                </Box>
-                <Box marginTop="8px" padding="0 8px">
-                  Người báo: {post.createdBy}
-                </Box>
-              </Box>
-              <CardContent>
-                <Box textAlign="start">{post.description}</Box>
+    <>
+      <Box
+        margin=" 0 0 12px 0"
+        fontSize="18px"
+        display="flex"
+        justifyContent="center"
+      >
+        Nội dung chi tiết bài báo cáo
+      </Box>
+      <Box
+        position="relative"
+        display="flex"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <Box
+          position="absolute"
+          top="-130px"
+          left="0"
+          display="flex"
+          alignItems="center"
+          zIndex={9999}
+        >
+          <IconButton onClick={_goBack}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <Typography variant="h5">Trở về</Typography>
+        </Box>
+
+        {loading ? (
+          <Box>
+            <Box margin="16px 0">Đang tải bài viết</Box>
+            <CircularProgress />
+          </Box>
+        ) : post ? (
+          <>
+            <Box width={"70%"}>
+              <Card>
                 <Box
-                  className={classes.imageTitleCss}
                   textAlign="start"
-                  margin="8px 0"
-                  fontWeight="500"
+                  margin="8px 0 0 0"
+                  className={classes.titleCss}
                 >
-                  Hình ảnh:
-                </Box>
-                <Box textAlign="start" display="flex" marginTop="8px">
-                  {post.images &&
-                    post.images.map((image, index) => {
+                  <Box color="primary.main" fontSize={theme.spacing(2.5)}>
+                    {post.title}
+                  </Box>
+                  <Box textAlign="start" margin="8px 0">
+                    {post.typePosts.map((type, index) => {
                       return (
-                        <Box
-                          key={index}
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          width="150px"
-                          height="170px"
-                          margin="8px"
-                          onClick={() => _openImage(index)}
-                        >
-                          <img
-                            src={image}
-                            style={{ maxWidth: "100%", maxHeight: "100%" }}
-                          />
+                        <Box display="flex" key={index}>
+                          {type.type.name}:{" "}
+                          <Box
+                            textOverflow="ellipsis"
+                            overflow="hidden"
+                            marginLeft="4px"
+                            color="error.main"
+                            style={{ wordBreak: "break-all" }}
+                          >
+                            {type.object}
+                          </Box>
                         </Box>
                       );
                     })}
-                  {imageShow ? (
+                  </Box>
+                </Box>
+                <CardContent>
+                  <Box textAlign="start" margin="0 0 8px 0" fontWeight="500">
+                    Nội dung:
+                  </Box>
+                  <Box margin="0 16px" textAlign="start">
+                    {post.description}
+                  </Box>
+                  <Box textAlign="start" margin="8px 0" fontWeight="500">
+                    Hình ảnh:
+                  </Box>
+                  <Box textAlign="start" display="flex" marginTop="8px">
+                    {post.imageList &&
+                      post.imageList.map((image, index) => {
+                        return (
+                          <Box
+                            key={index}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            width="150px"
+                            height="170px"
+                            margin="8px"
+                            onClick={() => _openImage(index)}
+                          >
+                            <img
+                              src={image}
+                              style={{ maxWidth: "100%", maxHeight: "100%" }}
+                            />
+                          </Box>
+                        );
+                      })}
                     <PhotoSwipeWrapper
                       isOpen={openImg}
                       index={indexImg}
                       items={imageShow}
                       onClose={_onCloseImg}
                     />
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+            <Box marginLeft="12px" width="30%">
+              <Card>
+                <CardContent>
+                  <Box display="flex" margin="8px 0">
+                    <Icon style={{ marginRight: "8px" }}>person</Icon>
+                    <Box
+                      color="primary.main"
+                      fontWeight="bold"
+                      marginLeft="4px"
+                    >
+                      {post.writer}
+                    </Box>
+                  </Box>
+                  <Box display="flex" margin="8px 4px">
+                    <CalendarTodayIcon style={{ marginRight: "8px" }} />
+                    <Box fontStyle="italic" marginLeft="4px">
+                      {formateDateTime(post.createdDate)}
+                    </Box>
+                  </Box>
+                  <Box display="flex" margin="8px 4px">
+                    {post.status == STATUS_POST.WaitApproved ? (
+                      <Icon color="waring">pending</Icon>
+                    ) : post.status == STATUS_POST.Approved ? (
+                      <Icon color="success">done</Icon>
+                    ) : (
+                      <Icon color="error">close</Icon>
+                    )}
+                    <Box fontStyle="italic" marginLeft="4px">
+                      {post.statusName}
+                    </Box>
+                  </Box>
+                  {post.status !== STATUS_POST.WaitApproved ? (
+                    <Box display="flex">
+                      <Icon>verified_user</Icon>
+                      <Box marginLeft="4px" style={{ wordBreak: "break-all" }}>
+                        {post.acceptedByName}
+                      </Box>
+                    </Box>
                   ) : null}
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
-          <Box marginLeft="12px" width="30%">
-            <Card>
-              <CardContent>
-                <Box display="flex" margin="8px 0">
-                  Người báo:{" "}
-                  <Box color="primary.main" fontWeight="bold" marginLeft="4px">
-                    {post.createdBy}
+                  <Box display="flex" margin="8px 0">
+                    {post.status == STATUS_POST.Approved ? (
+                      <ButtonCommon
+                        style={{
+                          backgroundColor: theme.palette.error.main,
+                          width: "100%",
+                        }}
+                        onClick={_disablePost}
+                      >
+                        Vô hiệu hóa bài
+                      </ButtonCommon>
+                    ) : null}
                   </Box>
-                </Box>
-                <Box display="flex" margin="8px 4px">
-                  Ngày báo:{" "}
-                  <Box fontStyle="italic" marginLeft="4px">
-                    {post.createdDate}
-                  </Box>
-                </Box>
-                <Box display="flex" margin="8px 0">
-                  <ButtonCommon
-                    style={{
-                      backgroundColor: theme.palette.error.main,
-                      width: "100%",
-                    }}
+                  <Box
+                    display="flex"
+                    margin="8px 0"
+                    justifyContent="space-between"
                   >
-                    Xóa bài
-                  </ButtonCommon>
-                </Box>
-                <Box
-                  display="flex"
-                  margin="8px 0"
-                  justifyContent="space-between"
-                >
-                  {post.statusId == STATUS_POST.WaitApproved ? (
-                    <>
-                      <ButtonCommon color="inherit">Từ chối bài</ButtonCommon>
-                      <ButtonCommon>Duyệt bài</ButtonCommon>
-                    </>
-                  ) : null}
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
-        </>
-      ) : (
-        <Box>Bài viết không tồn tại</Box>
-      )}
-    </Box>
+                    {post.status == STATUS_POST.WaitApproved ? (
+                      <>
+                        <ButtonCommon onClick={_disablePost} color="inherit">
+                          Từ chối duyệt
+                        </ButtonCommon>
+                        <ButtonCommon onClick={_onClickAccept}>
+                          Duyệt bài
+                        </ButtonCommon>
+                      </>
+                    ) : null}
+                  </Box>
+                  <Box
+                    display="flex"
+                    margin="8px 0"
+                    justifyContent="space-between"
+                  >
+                    {post.status == STATUS_POST.Denied ? (
+                      <>
+                        <ButtonCommon onClick={_onClickAccept}>
+                          Duyệt bài
+                        </ButtonCommon>
+                      </>
+                    ) : null}
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          </>
+        ) : (
+          <Box>Bài viết không tồn tại</Box>
+        )}
+      </Box>
+    </>
   );
 }
 

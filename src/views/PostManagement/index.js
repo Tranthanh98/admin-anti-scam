@@ -6,16 +6,13 @@ import { withRouter } from "react-router";
 import FilterPost from "./components/FilterPost";
 import TablePostManage from "./components/TablePostManage";
 import * as httpClient from "../../general/HttpClient";
+import dayjs from "dayjs";
 
 class PostManagement extends Component {
   state = {
     typeId: 0,
     searchText: "",
     statusId: 0,
-    dateRange: {
-      fromDate: moment(new Date(), "dd/MM/yyyy"),
-      toDate: moment(new Date(), "dd/MM/yyyy"),
-    },
     kindOfId: 0,
     reloadTable: false,
     typeOptions: [],
@@ -42,6 +39,8 @@ class PostManagement extends Component {
       onClickRow: this._onClickRow,
       onClickSearch: this._onClickSearch,
       onChangeKindOf: this._onChangeKindOf,
+      setDateRange: this._setDateRange,
+      setReloadData: this._setReloadData,
     };
     return (
       <ContextWrapper.Provider value={provider}>
@@ -53,16 +52,24 @@ class PostManagement extends Component {
     );
   }
 
-  _onChangeSearchText = (e) => {
-    this.setState({ searchText: e.target.value });
+  _setReloadData = (status) => {
+    this.setState({ reloadTable: status });
+  };
+
+  _setDateRange = (from, to) => {
+    this.setState({ dateRange: [from, to] });
+  };
+
+  _onChangeSearchText = (value) => {
+    this.setState({ searchText: value });
   };
 
   _onChangeType = (type) => {
-    this.setState({ typeId: type.value, reloadTable: true });
+    this.setState({ typeId: type.value });
   };
 
   _onChangeStatus = (status) => {
-    this.setState({ statusId: status.value, reloadTable: true });
+    this.setState({ statusId: status.value });
   };
 
   _onChangeDateRange = (dateRange) => {
@@ -74,10 +81,12 @@ class PostManagement extends Component {
     this.props.history.push("/admin/detail-post/" + item.id);
   };
 
-  _onClickSearch = () => {};
+  _onClickSearch = () => {
+    this.setState({ reloadTable: true });
+  };
 
   _onChangeKindOf = (kindOf) => {
-    this.setState({ kindOfId: kindOf.value, reloadTable: true });
+    this.setState({ kindOfId: kindOf.value });
   };
 }
 

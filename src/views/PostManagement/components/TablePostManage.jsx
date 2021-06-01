@@ -30,12 +30,21 @@ class TablePostManage extends Component {
   }
 
   _getData = async () => {
-    const { typeId, statusId, kindOfId, searchText } = this.props;
+    const {
+      typeId,
+      statusId,
+      kindOfId,
+      searchText,
+      setReloadData,
+    } = this.props;
+    const { currentPage } = this.state;
+    setReloadData && setReloadData(false);
     const searchModel = {
       typeId,
       statusId,
       kindOfId,
       searchText,
+      currentPage,
     };
     let res = await httpClient.sendPost("/PostManager/GetData", {
       searchModel,
@@ -50,13 +59,15 @@ class TablePostManage extends Component {
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    const { typeId, statusId, kindOfId, searchText } = this.props;
+    const { typeId, statusId, kindOfId, dateRange, reloadTable } = this.props;
     if (
       prevProps.typeId != typeId ||
       prevProps.statusId != statusId ||
       prevProps.kindOfId != kindOfId ||
-      prevProps.searchText != searchText
+      prevProps.dateRange != dateRange
     ) {
+      await this._getData();
+    } else if (prevProps.reloadTable === false && reloadTable === true) {
       await this._getData();
     }
   }
@@ -79,10 +90,10 @@ class TablePostManage extends Component {
       }),
       createColumn(i++, "statusName", "Trạng thái", null, (rowData) => {
         let color = "success.main";
-        if (rowData.statusId == STATUS_POST.WaitApproved) {
+        if (rowData.status == STATUS_POST.WaitApproved) {
           color = "warning.main";
         }
-        if (rowData.statusId == STATUS_POST.Denied) {
+        if (rowData.status == STATUS_POST.Denied) {
           color = "error.main";
         }
         return (
@@ -114,7 +125,7 @@ class TablePostManage extends Component {
   }
 
   _onChangePage = (currentPage) => {
-    this.setState({ currentPage }, () => this._getData);
+    this.setState({ currentPage }, this._getData);
   };
 }
 
@@ -124,11 +135,17 @@ const mapContextToProps = ({
   statusId,
   kindOfId,
   searchText,
+  dateRange,
+  reloadTable,
+  setReloadData,
 }) => ({
   onClickRow,
   typeId,
   statusId,
   kindOfId,
   searchText,
+  dateRange,
+  reloadTable,
+  setReloadData,
 });
 export default connectToContext(mapContextToProps)(TablePostManage);

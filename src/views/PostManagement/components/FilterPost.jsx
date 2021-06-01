@@ -2,24 +2,22 @@ import {
   Box,
   Card,
   CardContent,
+  Chip,
   Grid,
   IconButton,
   Popover,
 } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+import { openModalAct } from "actions/modal.action";
 import ButtonCommon from "components/ButtonCommon";
 import { connectToContext } from "components/ContextWrapper";
 import SelectOption from "components/SelectOption";
 import TextFormField from "components/TextFormField";
-import types from "general/Dummy/types";
-import React, { useState } from "react";
-import status from "../../../general/Dummy/statusPost";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { openModalAct } from "actions/modal.action";
-import BodyFormReputation from "./BodyFormReputation";
-import { useDispatch } from "react-redux";
-import SearchIcon from "@material-ui/icons/Search";
 import kindOf from "general/Dummy/kindOf";
+import React, { useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
+import { useDispatch } from "react-redux";
+import BodyFormReputation from "./BodyFormReputation";
 
 function FilterPost({
   typeId,
@@ -33,8 +31,10 @@ function FilterPost({
   onChangeKindOf,
   typeOptions,
   statusOptions,
+  setReloadData,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [showSearch, setShowSearch] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,6 +42,12 @@ function FilterPost({
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const _handleDeleteSearch = () => {
+    onChangeSearchText("");
+    setReloadData(true);
+    setShowSearch(false);
   };
 
   const dispatch = useDispatch();
@@ -60,6 +66,7 @@ function FilterPost({
   const _onClickSearch = () => {
     onClickSearch();
     handleClose();
+    setShowSearch(true);
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -115,12 +122,13 @@ function FilterPost({
               <CardContent>
                 <TextFormField
                   value={searchText}
-                  onChange={onChangeSearchText}
+                  onChange={(e) => onChangeSearchText(e.target.value)}
                   margin="8 0px"
                   variant="outlined"
                   label="Tìm kiếm"
                   placeholder="Tìm kiếm..."
                   fullWidth
+                  autoFocus
                 />
                 <Box marginTop="8px">
                   <ButtonCommon onClick={_onClickSearch}>Tìm kiếm</ButtonCommon>
@@ -128,6 +136,18 @@ function FilterPost({
               </CardContent>
             </Card>
           </Popover>
+        </Grid>
+      </Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          {showSearch ? (
+            <Chip
+              label={`Tìm kiếm theo: ${searchText}`}
+              onDelete={_handleDeleteSearch}
+              color="primary"
+              variant="outlined"
+            />
+          ) : null}
         </Grid>
       </Grid>
       <Grid container spacing={2}>
@@ -150,13 +170,12 @@ const mapContextToProps = ({
   onChangeSearchText,
   statusId,
   onChangeStatus,
-  dateRange,
-  onChangeDateRange,
   onClickSearch,
   kindOfId,
   onChangeKindOf,
   typeOptions,
   statusOptions,
+  setReloadData,
 }) => ({
   typeId,
   onChangeType,
@@ -164,12 +183,11 @@ const mapContextToProps = ({
   onChangeSearchText,
   statusId,
   onChangeStatus,
-  dateRange,
-  onChangeDateRange,
   onClickSearch,
   kindOfId,
   onChangeKindOf,
   typeOptions,
   statusOptions,
+  setReloadData,
 });
 export default connectToContext(mapContextToProps)(FilterPost);
