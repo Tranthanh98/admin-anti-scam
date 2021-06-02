@@ -15,7 +15,6 @@ import SelectOption from "components/SelectOption";
 import TextFormField from "components/TextFormField";
 import kindOf from "general/Dummy/kindOf";
 import React, { useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch } from "react-redux";
 import BodyFormReputation from "./BodyFormReputation";
 

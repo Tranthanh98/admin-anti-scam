@@ -20,6 +20,8 @@ import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import PostManagement from "views/PostManagement";
 import UserProfile from "views/UserProfile/UserProfile.js";
+import SettingsIcon from "@material-ui/icons/Settings";
+import SystemSetting from "views/SystemSetting";
 
 const dashboardRoutes = [
   {
@@ -36,6 +38,14 @@ const dashboardRoutes = [
     rtlName: "ملف تعريفي للمستخدم",
     icon: Person,
     component: UserProfile,
+    layout: "/admin",
+  },
+  {
+    path: "/system-setting",
+    name: "Quản trị hệ thống",
+    rtlName: "ملف تعريفي للمستخدم",
+    icon: SettingsIcon,
+    component: SystemSetting,
     layout: "/admin",
   },
 ];

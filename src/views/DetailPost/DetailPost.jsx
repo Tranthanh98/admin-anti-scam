@@ -205,26 +205,30 @@ function DetailPost(props) {
                     Hình ảnh:
                   </Box>
                   <Box textAlign="start" display="flex" marginTop="8px">
-                    {post.imageList &&
-                      post.imageList.map((image, index) => {
-                        return (
-                          <Box
-                            key={index}
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                            width="150px"
-                            height="170px"
-                            margin="8px"
-                            onClick={() => _openImage(index)}
-                          >
-                            <img
-                              src={image}
-                              style={{ maxWidth: "100%", maxHeight: "100%" }}
-                            />
-                          </Box>
-                        );
-                      })}
+                    {!post.imageList ||
+                      (post.imageList.length === 0 ? (
+                        <Box>Không có hình ảnh nào được cung cấp</Box>
+                      ) : (
+                        post.imageList.map((image, index) => {
+                          return (
+                            <Box
+                              key={index}
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              width="150px"
+                              height="170px"
+                              margin="8px"
+                              onClick={() => _openImage(index)}
+                            >
+                              <img
+                                src={image}
+                                style={{ maxWidth: "100%", maxHeight: "100%" }}
+                              />
+                            </Box>
+                          );
+                        })
+                      ))}
                     <PhotoSwipeWrapper
                       isOpen={openImg}
                       index={indexImg}
@@ -248,13 +252,13 @@ function DetailPost(props) {
                       {post.writer}
                     </Box>
                   </Box>
-                  <Box display="flex" margin="8px 4px">
+                  <Box display="flex" margin="8px 0">
                     <CalendarTodayIcon style={{ marginRight: "8px" }} />
                     <Box fontStyle="italic" marginLeft="4px">
                       {formateDateTime(post.createdDate)}
                     </Box>
                   </Box>
-                  <Box display="flex" margin="8px 4px">
+                  <Box display="flex" margin="8px 0">
                     {post.status == STATUS_POST.WaitApproved ? (
                       <Icon color="waring">pending</Icon>
                     ) : post.status == STATUS_POST.Approved ? (

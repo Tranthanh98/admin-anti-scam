@@ -6,7 +6,6 @@ import { withRouter } from "react-router";
 import FilterPost from "./components/FilterPost";
 import TablePostManage from "./components/TablePostManage";
 import * as httpClient from "../../general/HttpClient";
-import dayjs from "dayjs";
 
 class PostManagement extends Component {
   state = {

@@ -9,23 +9,26 @@ import FormCreateNewAdmin from "./components/FormCreateNewAdmin";
 import TableUserData from "./components/TableUserData";
 import UserFilter from "./components/UserFilter";
 import dummyUserData from "./configs/dummyUserData";
+import * as httpClient from "general/HttpClient";
 
 class UserProfile extends Component {
   state = {
     searchText: "",
     roleId: 0,
-    tableData: [],
+    statusId: 0,
+    adminRoles: [],
+    adminStatus: [],
   };
   async componentDidMount() {
-    await this._getData();
+    await this._getDefaultData();
   }
   render() {
     let provider = {
       ...this.state,
       onChangeSearchText: this._onChangeSearchText,
       onChangeRole: this._onChangeRole,
-      getDataTable: this._getData,
       onClickRow: this._onClickRow,
+      onChangeStatus: this._setStatus,
     };
     return (
       <ContextWrapper.Provider value={provider}>
@@ -42,9 +45,20 @@ class UserProfile extends Component {
     );
   }
 
-  _getData = async () => {
-    await sleep(500);
-    this.setState({ tableData: dummyUserData });
+  _setStatus = (statusId) => {
+    this.setState({ statusId });
+  };
+
+  _getDefaultData = async () => {
+    try {
+      let res = await httpClient.sendGet("/UserManager/GetDefault");
+      if (res.data.isSuccess) {
+        const { adminStatus, adminRoles } = res.data.data;
+        this.setState({ adminStatus, adminRoles });
+      }
+    } catch (e) {
+    } finally {
+    }
   };
 
   _onChangeSearchText = (e) => {
