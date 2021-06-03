@@ -32,6 +32,10 @@ class App extends Component {
     eventBus.subscribe(this, "error/authorized", () => {
       this._setNeedLogout();
     });
+    eventBus.subscribe(this, "error/forbidden", (e) => {
+      console.log("mess:", e);
+      this.props.addAlert(String(e.message));
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {

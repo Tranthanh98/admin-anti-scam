@@ -248,6 +248,7 @@ function DetailPost(props) {
                       color="primary.main"
                       fontWeight="bold"
                       marginLeft="4px"
+                      style={{ wordBreak: "break-all" }}
                     >
                       {post.writer}
                     </Box>

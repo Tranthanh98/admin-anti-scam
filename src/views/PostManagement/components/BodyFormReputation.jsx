@@ -10,19 +10,19 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { addAlert } from "actions/alertify.action";
+import types from "general/Dummy/types";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import * as yup from "yup";
 import { loadingAct } from "actions/loading.action";
 import SelectOption from "components/SelectOption";
 import UploadComponent from "components/UploadComponent";
 import { useInputText } from "general/CustomHook";
-import types from "general/Dummy/types";
-import { sleep } from "general/helper";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import * as yup from "yup";
+import * as httpClient from "general/HttpClient";
 
 const typeOptions = [...types].splice(1);
 
-function BodyFormReputation(props) {
+function BodyFormReport(props) {
   const [type, setType] = useState(typeOptions[0]);
 
   const [listTypeInput, setListType] = useState([]);
@@ -34,7 +34,7 @@ function BodyFormReputation(props) {
 
   const titleReport = useInputText(
     "",
-    yup.string().required("trường này là bắt buộc").max(150)
+    yup.string().required("Bắt buộc").max(150)
   );
 
   const description = useInputText("");
@@ -67,31 +67,33 @@ function BodyFormReputation(props) {
     setListType(cloneList);
   };
 
-  const _onUploadFile = async (e) => {
-    const { files } = e.target;
-    const fileList = [];
-    for (let i of files) {
-      let reader = new FileReader();
-      let url = await reader.readAsDataURL(i);
-      reader.onloadend = async function (m) {
-        fileList.push(reader.result);
-        const cloneImageList = [...fileImages, ...fileList];
-        await setFileImage(cloneImageList);
-      };
-    }
+  const _onUploadFile = async (imgList) => {
+    let cloneImgList = [...fileImages, ...imgList];
+    setFileImage(cloneImgList);
   };
-  const _onDeleteImage = (image) => {
-    let cloneListImage = [...fileImages];
-    const index = fileImages.findIndex((i) => i == image);
-    if (index != -1) {
-      cloneListImage.splice(index, 1);
-      setFileImage(cloneListImage);
+  const _onDeleteImage = async (imageId) => {
+    try {
+      let response = await httpClient.sendGet("/file/DeleteFile?id=" + imageId);
+      if (response.data.isSuccess) {
+        let cloneListImage = [...fileImages];
+        const index = fileImages.findIndex((i) => i.fileId == imageId);
+        if (index != -1) {
+          cloneListImage.splice(index, 1);
+          setFileImage(cloneListImage);
+        }
+        dispatch(addAlert("Xóa ảnh thành công", "success"));
+      } else {
+        throw new Error(response.data.messages);
+      }
+    } catch (e) {
+      console.error(String(e));
+      dispatch(addAlert("Có lỗi xảy ra khi xóa ảnh", "error"));
     }
   };
 
   const _validateData = () => {
     if (!titleReport.value || titleReport.value.length === 0) {
-      dispatch(addAlert("Trường title là bắt buộc", "error"));
+      dispatch(addAlert("Trường 'Tiêu đề' là bắt buộc", "error"));
       return false;
     }
     if (listTypeInput.length === 0) {
@@ -112,16 +114,51 @@ function BodyFormReputation(props) {
       return;
     }
     dispatch(loadingAct(true));
-    await sleep(1500);
-    props.onConfirm();
-    dispatch(loadingAct(false));
-    dispatch(
-      addAlert("gửi báo cáo lừa đảo thành công và đang chờ duyệt", "success")
-    );
+    try {
+      let dataModel = {
+        title: titleReport.value,
+        description: description.value,
+        kindOf: props.kindOf,
+        typePostList: listTypeInput.map((i) => ({
+          typeId: i.type.value,
+          object: i.data,
+        })),
+        imageIds: fileImages.map((i) => i.fileId),
+      };
+      let response = await httpClient.sendPost("/PostManage/Create", dataModel);
+      console.log("response:", response);
+      if (!response.data.isSuccess) {
+        throw new Error(response.data.messages);
+      }
+      props.onConfirm();
+      props.getData && props.getData();
+    } catch (e) {
+      console.error(String(e));
+      dispatch(addAlert(String(e), "error"));
+    } finally {
+      dispatch(loadingAct(false));
+    }
+  };
+
+  const _deleteAllFileClosing = async () => {
+    try {
+      const listId = fileImages.map((i) => i.fileId);
+      let resonpse = await httpClient.sendPost(
+        "/file/DeleteMultipleFile",
+        listId
+      );
+      if (!resonpse.data.isSuccess) {
+        throw new Error(resonpse.data.messages);
+      }
+      dispatch(addAlert("Xóa ảnh thành công", "success"));
+    } catch (e) {
+      console.error(String(e));
+      dispatch(addAlert("Có lỗi xảy ra khi xóa ảnh", "error"));
+    }
   };
 
   const _onCancel = () => {
-    props.onConfirm();
+    props.onConfirm(_deleteAllFileClosing);
   };
 
   const _closeDialogConfirm = () => {
@@ -137,8 +174,12 @@ function BodyFormReputation(props) {
         <Grid item xs={12}>
           <TextField
             variant="outlined"
-            label="Title"
-            placeholder="Nhập title, phần này được xem như một trường tìm kiếm"
+            label="Tiêu đề"
+            placeholder={
+              props.placeholder
+                ? props.placeholder
+                : "Ví dụ: Tố cáo lừa đảo mua bán tiền điện tử"
+            }
             size="small"
             fullWidth
             {...titleReport}
@@ -184,11 +225,7 @@ function BodyFormReputation(props) {
                           value={item.data || ""}
                           onChange={(e) => _onChangeValueType(e, item)}
                           error={!Boolean(item.data)}
-                          helperText={
-                            !Boolean(item.data)
-                              ? "*Trường này là bắt buộc"
-                              : null
-                          }
+                          helperText={!Boolean(item.data) ? "*Bắt buộc" : null}
                         />
                         <IconButton
                           style={{ width: 40, height: 40 }}
@@ -207,7 +244,7 @@ function BodyFormReputation(props) {
                 <TextField
                   variant="outlined"
                   label="Mô tả"
-                  placeholder="Mô tả thêm..."
+                  placeholder="Mô tả thêm về câu chuyện của bạn..."
                   size="small"
                   fullWidth
                   rows={6}
@@ -216,7 +253,6 @@ function BodyFormReputation(props) {
                 />
               </Box>
               <Box marginBottom="12px">
-                {/* <DropzoneArea onChange={_uploadFile} /> */}
                 <UploadComponent onChange={_onUploadFile} />
               </Box>
               <Grid container spacing={1}>
@@ -239,12 +275,12 @@ function BodyFormReputation(props) {
                       >
                         <IconButton
                           style={{ position: "absolute", top: 0, right: -15 }}
-                          onClick={() => _onDeleteImage(ima)}
+                          onClick={() => _onDeleteImage(ima.fileId)}
                         >
                           <DeleteIcon />
                         </IconButton>
                         <img
-                          src={ima}
+                          src={ima.url}
                           style={{ maxWidth: "100%", maxHeight: "100%" }}
                         />
                       </Box>
@@ -275,7 +311,7 @@ function BodyFormReputation(props) {
       </Box>
       <Dialog open={openDialogConfirm} onClose={_closeDialogConfirm}>
         <DialogContent>
-          Cam đoan những điều bạn vừa điền là chính xác
+          Xác nhận những điều bạn vừa báo cáo là chính xác
         </DialogContent>
         <DialogActions>
           <Button
@@ -294,6 +330,6 @@ function BodyFormReputation(props) {
   );
 }
 
-BodyFormReputation.propTypes = {};
+BodyFormReport.propTypes = {};
 
-export default BodyFormReputation;
+export default BodyFormReport;

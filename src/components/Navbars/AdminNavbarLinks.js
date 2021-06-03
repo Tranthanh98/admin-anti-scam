@@ -20,8 +20,9 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { Box } from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
 
@@ -30,19 +31,11 @@ export default function AdminNavbarLinks() {
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
 
+  const admin = useSelector((state) => state.loginReducer);
+
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const handleClickNotification = (event) => {
-    if (openNotification && openNotification.contains(event.target)) {
-      setOpenNotification(null);
-    } else {
-      setOpenNotification(event.currentTarget);
-    }
-  };
-  const handleCloseNotification = () => {
-    setOpenNotification(null);
-  };
   const handleClickProfile = (event) => {
     if (openProfile && openProfile.contains(event.target)) {
       setOpenProfile(null);
@@ -57,24 +50,12 @@ export default function AdminNavbarLinks() {
   const _logout = () => {
     dispatch({ type: "LOGOUT" });
   };
+
+  const info = admin.data;
+  console.log("admin:", admin);
   return (
-    <div>
-      <div className={classes.searchWrapper}>
-        <CustomInput
-          formControlProps={{
-            className: classes.margin + " " + classes.search,
-          }}
-          inputProps={{
-            placeholder: "Search",
-            inputProps: {
-              "aria-label": "Search",
-            },
-          }}
-        />
-        <Button color="white" aria-label="edit" justIcon round>
-          <Search />
-        </Button>
-      </div>
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <div className={classes.searchWrapper}>Hello, {info.email}</div>
       <div className={classes.manager}>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}

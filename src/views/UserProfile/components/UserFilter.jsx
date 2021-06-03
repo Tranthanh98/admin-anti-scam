@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { Box, Grid } from "@material-ui/core";
 import TextFormField from "components/TextFormField";
 import { connectToContext } from "components/ContextWrapper";
 import userRoles from "general/Dummy/userRole";
 import SelectOption from "components/SelectOption";
+import debounce from "lodash.debounce";
 
 function UserFilter({
   searchText,
@@ -16,13 +17,26 @@ function UserFilter({
   statusId,
   onChangeStatus,
 }) {
+  const [search, setSearch] = useState("");
+
+  const _debounceSetSearchText = useCallback(
+    debounce((nextValue) => onChangeSearchText(nextValue), 800),
+    []
+  );
+
+  const _onChangeSearchText = (e) => {
+    const { value } = e.target;
+    setSearch(value);
+    _debounceSetSearchText(value);
+  };
+
   return (
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={4}>
           <TextFormField
-            value={searchText}
-            onChange={onChangeSearchText}
+            value={search}
+            onChange={_onChangeSearchText}
             margin="8 0px"
             variant="outlined"
             label="Tìm kiếm theo tên"

@@ -45,6 +45,9 @@ httpClient.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       eventBus.publish("error/authorized", "Vui lòng đăng nhập lại");
     }
+    if (error.response && error.response.status === 403) {
+      eventBus.publish("error/forbidden", "Bạn không có quyền này.");
+    }
     if (error.response && error.response.status === 422) {
       return Promise.reject(error);
     } else {

@@ -7,6 +7,8 @@ import { formateDateTime } from "general/helper";
 import { connectToContext } from "components/ContextWrapper";
 import { PureComponent } from "react";
 import * as httpClient from "general/HttpClient";
+import { addAlert } from "actions/alertify.action";
+import { connect } from "react-redux";
 
 let i = 1;
 class TableUserData extends PureComponent {
@@ -25,12 +27,14 @@ class TableUserData extends PureComponent {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    const { searchText, statusId, roleId } = this.props;
+    const { searchText, statusId, roleId, refreshData } = this.props;
     if (
       prevProps.searchText != searchText ||
       prevProps.statusId != statusId ||
       prevProps.roleId != roleId
     ) {
+      await this._getData();
+    } else if (prevProps.refreshData === false && refreshData === true) {
       await this._getData();
     }
   }
@@ -69,15 +73,19 @@ class TableUserData extends PureComponent {
     };
     try {
       let res = await httpClient.sendPost("/UserManager/Get", postData);
-      if (res.data.isSuccess) {
+      if (res?.data?.isSuccess) {
         const { currentPage, totalPage, data } = res.data.data;
         this.setState({
           currentPage,
           totalPage,
           tableData: data,
         });
+      } else {
+        throw new Error(res.data.messages);
       }
-    } catch (e) {}
+    } catch (e) {
+      this.props.addAlert(String(e));
+    }
   };
 
   _columnConfig = () => {
@@ -105,11 +113,27 @@ class TableUserData extends PureComponent {
 
 TableUserData.propTypes = {};
 
-const mapContextToProps = ({ searchText, statusId, roleId, onClickRow }) => ({
+const mapContextToProps = ({
   searchText,
   statusId,
   roleId,
   onClickRow,
+  refreshData,
+}) => ({
+  searchText,
+  statusId,
+  roleId,
+  onClickRow,
+  refreshData,
 });
 
-export default connectToContext(mapContextToProps)(TableUserData);
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = {
+  addAlert: addAlert,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(connectToContext(mapContextToProps)(TableUserData));

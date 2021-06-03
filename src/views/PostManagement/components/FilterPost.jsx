@@ -14,6 +14,7 @@ import { connectToContext } from "components/ContextWrapper";
 import SelectOption from "components/SelectOption";
 import TextFormField from "components/TextFormField";
 import kindOf from "general/Dummy/kindOf";
+import { KIND_OF } from "general/enum";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import BodyFormReputation from "./BodyFormReputation";
@@ -52,8 +53,31 @@ function FilterPost({
   const dispatch = useDispatch();
   const _createNewReputation = () => {
     let modalData = {
-      title: "Bài đăng uy tín",
-      body: <BodyFormReputation />,
+      title: "Dịch vụ uy tín",
+      body: (
+        <BodyFormReputation
+          kindOf={KIND_OF.Reputation}
+          placeholder="Viết về một công ty, cá nhân uy tín..."
+          getData={() => setReloadData(true)}
+        />
+      ),
+      style: {
+        fullWidth: true,
+        maxWidth: "md",
+      },
+    };
+    dispatch(openModalAct(modalData));
+  };
+
+  const _createNewReport = () => {
+    let modalData = {
+      title: "Báo cáo lừa đảo",
+      body: (
+        <BodyFormReputation
+          kindOf={KIND_OF.Cheat}
+          getData={() => setReloadData(true)}
+        />
+      ),
       style: {
         fullWidth: true,
         maxWidth: "md",
@@ -150,9 +174,14 @@ function FilterPost({
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid item>
           <ButtonCommon onClick={_createNewReputation} size="medium">
             Tạo bài đăng uy tín
+          </ButtonCommon>
+        </Grid>
+        <Grid item>
+          <ButtonCommon onClick={_createNewReport} size="medium">
+            Tạo báo cáo lừa đảo
           </ButtonCommon>
         </Grid>
       </Grid>
