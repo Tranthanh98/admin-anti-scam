@@ -356,12 +356,7 @@ function DetailPost(props) {
                       </>
                     ) : null}
                   </Box>
-                  <Box
-                    display="flex"
-                    margin="8px 0"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
+                  <Box display="flex" margin="8px 0" alignItems="center">
                     <Checkbox
                       checked={isHighLight}
                       onChange={_setHighLightPost}
