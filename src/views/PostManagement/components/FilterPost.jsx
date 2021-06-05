@@ -59,6 +59,7 @@ function FilterPost({
           kindOf={KIND_OF.Reputation}
           placeholder="Viết về một công ty, cá nhân uy tín..."
           getData={() => setReloadData(true)}
+          typeOptions={typeOptions}
         />
       ),
       style: {
@@ -76,6 +77,7 @@ function FilterPost({
         <BodyFormReputation
           kindOf={KIND_OF.Cheat}
           getData={() => setReloadData(true)}
+          typeOptions={typeOptions}
         />
       ),
       style: {

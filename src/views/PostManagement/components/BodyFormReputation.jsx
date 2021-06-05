@@ -10,7 +10,6 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { addAlert } from "actions/alertify.action";
-import types from "general/Dummy/types";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
@@ -20,10 +19,10 @@ import UploadComponent from "components/UploadComponent";
 import { useInputText } from "general/CustomHook";
 import * as httpClient from "general/HttpClient";
 
-const typeOptions = [...types].splice(1);
-
 function BodyFormReport(props) {
-  const [type, setType] = useState(typeOptions[0]);
+  const [type, setType] = useState(
+    props.typeOptions ? props.typeOptions[0] : null
+  );
 
   const [listTypeInput, setListType] = useState([]);
   const [fileImages, setFileImage] = useState([]);
@@ -125,8 +124,10 @@ function BodyFormReport(props) {
         })),
         imageIds: fileImages.map((i) => i.fileId),
       };
-      let response = await httpClient.sendPost("/PostManage/Create", dataModel);
-      console.log("response:", response);
+      let response = await httpClient.sendPost(
+        "/PostManager/Create",
+        dataModel
+      );
       if (!response.data.isSuccess) {
         throw new Error(response.data.messages);
       }
@@ -168,6 +169,15 @@ function BodyFormReport(props) {
   const _openDialogConfirm = () => {
     setOpenDialogConfirm(true);
   };
+  let typeOptions = [];
+  const findUndefinedType = props.typeOptions.findIndex((i) => i.value == 0);
+  if (findUndefinedType != -1) {
+    let clone = [...props.typeOptions];
+    clone.splice(findUndefinedType, 1);
+    typeOptions = clone;
+  } else {
+    typeOptions = props.typeOptions;
+  }
   return (
     <Box>
       <Grid container spacing={2}>

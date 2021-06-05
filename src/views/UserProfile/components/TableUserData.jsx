@@ -63,7 +63,8 @@ class TableUserData extends PureComponent {
 
   _getData = async () => {
     const { currentPage } = this.state;
-    const { searchText, statusId, roleId } = this.props;
+    const { searchText, statusId, roleId, setRefreshData } = this.props;
+    setRefreshData(false);
     const postData = {
       searchText,
       statusId,
@@ -119,12 +120,14 @@ const mapContextToProps = ({
   roleId,
   onClickRow,
   refreshData,
+  setRefreshData,
 }) => ({
   searchText,
   statusId,
   roleId,
   onClickRow,
   refreshData,
+  setRefreshData,
 });
 
 const mapStateToProps = (state) => ({});

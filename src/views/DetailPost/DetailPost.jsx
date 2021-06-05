@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   CircularProgress,
   Icon,
   IconButton,
@@ -44,6 +45,7 @@ function DetailPost(props) {
   const [indexImg, setIndexImg] = useState(0);
   const params = useParams();
   const [loading, setLoading] = useState(false);
+  const [isHighLight, setHighLight] = useState(false);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -56,6 +58,7 @@ function DetailPost(props) {
       let res = await httpClient.sendGet("/PostManager/DetailPost/" + id);
       if (res.data.isSuccess) {
         setPost(res.data.data);
+        setHighLight(res.data.data.isHighlight);
       } else {
         throw new Error(res.data.messages);
       }
@@ -108,6 +111,7 @@ function DetailPost(props) {
 
   const _disablePost = async () => {
     const { id } = params;
+
     dispatch(loadingAct(true));
     try {
       let res = await httpClient.sendGet("/PostManager/Disabled/" + id);
@@ -125,6 +129,30 @@ function DetailPost(props) {
   const _goBack = () => {
     console.log("back");
     history.goBack();
+  };
+
+  const _setHighLightPost = async (e) => {
+    const { checked } = e.target;
+    dispatch(loadingAct(true));
+    try {
+      let postModel = {
+        postId: post.id,
+        isHighLight: checked,
+      };
+      let res = await httpClient.sendPost(
+        "/postmanager/SetHighlight",
+        postModel
+      );
+      if (res.data.isSuccess) {
+        setHighLight(checked);
+      } else {
+        throw new Error(res.data.messages);
+      }
+    } catch (e) {
+      dispatch(addAlert(String(e), "error"));
+    } finally {
+      dispatch(loadingAct(false));
+    }
   };
   const theme = useTheme();
   console.log("post:", post);
@@ -242,6 +270,13 @@ function DetailPost(props) {
             <Box marginLeft="12px" width="30%">
               <Card>
                 <CardContent>
+                  <Box
+                    color={post.kindOf == 2 ? "#f44336" : "#4caf50"}
+                    fontSize="20px"
+                    fontWeight="bold"
+                  >
+                    {post.kindOfName}
+                  </Box>
                   <Box display="flex" margin="8px 0">
                     <Icon style={{ marginRight: "8px" }}>person</Icon>
                     <Box
@@ -320,6 +355,18 @@ function DetailPost(props) {
                         </ButtonCommon>
                       </>
                     ) : null}
+                  </Box>
+                  <Box
+                    display="flex"
+                    margin="8px 0"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Checkbox
+                      checked={isHighLight}
+                      onChange={_setHighLightPost}
+                    />
+                    <Box marginLeft="8px">Đặt bài viết nổi bật</Box>
                   </Box>
                 </CardContent>
               </Card>
