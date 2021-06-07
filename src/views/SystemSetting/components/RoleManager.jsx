@@ -66,12 +66,15 @@ function RoleManager(props) {
   }, []);
 
   const _onDelete = (id) => {
+    const findIndex = roleList.findIndex((i) => i.value == id);
+    let cloneRole = [...roleList];
+    cloneRole.splice(findIndex, 1);
     let modalData = {
       title: "Xác nhận xóa thể loại",
       body: (
         <PopupConfirmDelete
           idDelete={id}
-          typeOptions={roleList}
+          typeOptions={cloneRole}
           getData={_getRoleDate}
         />
       ),

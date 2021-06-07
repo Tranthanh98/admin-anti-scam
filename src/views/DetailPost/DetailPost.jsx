@@ -78,8 +78,8 @@ function DetailPost(props) {
       post?.imageList?.map((i) => {
         return {
           src: i,
-          w: 600,
-          h: 400,
+          w: 0,
+          h: 0,
         };
       });
     setImageShow(imgShows ?? []);

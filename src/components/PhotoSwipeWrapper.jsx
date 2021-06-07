@@ -22,6 +22,21 @@ const PhotoSwipeWrapper = (props) => {
       options
     );
 
+    photoSwipe.listen("gettingData", function (index, item) {
+      if (item.w < 1 || item.h < 1) {
+        // unknown size
+        var img = new Image();
+        img.onload = function () {
+          // will get size after load
+          item.w = this.width; // set image width
+          item.h = this.height; // set image height
+          photoSwipe.invalidateCurrItems(); // reinit Items
+          photoSwipe.updateSize(true); // reinit Items
+        };
+        img.src = item.src; // let's download image
+      }
+    });
+
     if (photoSwipe) {
       if (props.isOpen) {
         photoSwipe.init();

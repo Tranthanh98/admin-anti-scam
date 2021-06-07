@@ -1,3 +1,11 @@
+import {
+  FormControl,
+  Hidden,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -9,13 +17,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import * as yup from "yup";
 import { addAlert } from "../../actions/alertify.action";
 import { loginAct } from "../../actions/login.action";
 import { useInputText } from "../../general/CustomHook";
+import logoAntiscam from "../../assets/img/logo-primary-1.png";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 function Copyright() {
   return (
@@ -65,15 +75,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LoginPage() {
   const classes = useStyles();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const userName = useInputText(
-    "",
-    yup.string().required("Trường này là bắt buộc")
-  );
-  const password = useInputText(
-    "",
-    yup.string().required("Trường này là bắt buộc")
-  );
+  const userName = useInputText("", yup.string().required("Bắt buộc"));
+  const password = useInputText("", yup.string().required("Bắt buộc"));
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -90,10 +95,33 @@ export default function LoginPage() {
     }
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={false} sm={4} md={7} style={{ maxHeight: "100vh" }}>
+        <Hidden smDown>
+          <Box
+            width="100%"
+            height="100vh"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box>
+              <img
+                style={{ maxWidth: "100%", maxHeight: "100%" }}
+                src={logoAntiscam}
+                alt="antiscam vietnam"
+              />
+            </Box>
+          </Box>
+        </Hidden>
+      </Grid>
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
@@ -113,16 +141,34 @@ export default function LoginPage() {
               autoFocus
               {...userName}
             />
-            <TextField
+            <FormControl
+              style={{ marginTop: "12px" }}
               variant="outlined"
-              margin="normal"
-              required
               fullWidth
-              label="Mật khẩu"
-              type="password"
-              autoComplete="current-password"
-              {...password}
-            />
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                Mật khẩu
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                {...password}
+                required
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      // onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                labelWidth={70}
+              />
+            </FormControl>
             <Button
               fullWidth
               variant="contained"
