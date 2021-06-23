@@ -227,7 +227,10 @@ function DetailPost(props) {
                     Nội dung:
                   </Box>
                   <Box margin="0 16px" textAlign="start">
-                    {post.description}
+                    <div
+                      dangerouslySetInnerHTML={{ __html: post.description }}
+                    />
+                    {/* {post.description} */}
                   </Box>
                   <Box textAlign="start" margin="8px 0" fontWeight="500">
                     Hình ảnh:

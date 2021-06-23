@@ -116,7 +116,7 @@ function BodyFormReport(props) {
     try {
       let dataModel = {
         title: titleReport.value,
-        description: description.value,
+        description: description.value.replaceAll("\n", "<br/>"),
         kindOf: props.kindOf,
         typePostList: listTypeInput.map((i) => ({
           typeId: i.type.value,
