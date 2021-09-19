@@ -3,11 +3,8 @@ import PropTypes from "prop-types";
 import { Box } from "@material-ui/core";
 import CustomTable from "components/Table/Table";
 import createColumn from "general/createColumn";
-import { sleep } from "general/helper";
-import dummyData from "../configs/dummyData";
 import { connectToContext } from "components/ContextWrapper";
 import { STATUS_POST } from "general/enum";
-import { PureComponent } from "react";
 import * as httpClient from "general/HttpClient";
 import { formateDateTime } from "general/helper";
 
